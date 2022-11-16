@@ -24,14 +24,15 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
-		Flux<Usuario> nombres = Flux.just("Andres", "Pedro", "Jhon", "Diego", "Juan")
-				.map(nombre -> new Usuario(nombre.toUpperCase(), null)) // Realiza la transformacion del stream
+		Flux<Usuario> nombres = Flux.just("Andres Guzman", "Pedro Fulan", "Jhon Doe", "Diego Sultano", "Juan Medrano", "Juan Mengano", "Bruce Lee", "Bruce Willies")
+				.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase())) // Realiza la transformacion del stream
+				.filter(usuario -> usuario.getNombre().toLowerCase().equals("bruce"))
 				.doOnNext(
 						usuario -> {
 							if(usuario == null) {
 								throw new RuntimeException("Nombres no pueden ser vacíos");
 							}else {
-								System.out.println(usuario.getNombre());									
+								System.out.println(usuario.getNombre() + " " + usuario.getApellido());									
 							}
 						})
 				.map(usuario -> {
@@ -44,7 +45,7 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 		
 		
 		nombres.subscribe(
-					usuario -> Log.info(usuario.getNombre()), //Funcion para cada elemento que llega en la susccripción 
+					usuario -> Log.info(usuario.toString()), //Funcion para cada elemento que llega en la susccripción 
 					error -> Log.error(error.getMessage()), // Funcion en caso de error
 					new Runnable() { // Evento onComplete, corresponde a la función a ejecutar toda vez que termine el Stream
 						@Override
