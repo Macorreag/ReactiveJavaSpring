@@ -22,7 +22,7 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
-		Flux<String> nombres = Flux.just("Andres", "Pedro", "", "Diego", "Juan")
+		Flux<String> nombres = Flux.just("Andres", "Pedro", "Jhon", "Diego", "Juan")
 				.doOnNext(
 						e -> {
 							if(e.isEmpty()) {
@@ -36,8 +36,14 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 		
 		
 		nombres.subscribe(
-				Log::info, //Funcion para cada elemento que llega en la susccripción 
-				error -> Log.error(error.getMessage()) // Funcion en caso de error
+					Log::info, //Funcion para cada elemento que llega en la susccripción 
+					error -> Log.error(error.getMessage()), // Funcion en caso de error
+					new Runnable() { // Evento onComplete, corresponde a la función a ejecutar toda vez que termine el Stream
+						@Override
+						public void run() {
+							Log.info("Ha finalizado la ejecución del observable con éxito!");
+						}
+					}
 				);
 		
 		
