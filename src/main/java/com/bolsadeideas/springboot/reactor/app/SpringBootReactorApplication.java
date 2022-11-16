@@ -8,6 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.bolsadeideas.springboot.reactor.app.models.Usuario;
+
 import reactor.core.publisher.Flux;
 
 @SpringBootApplication
@@ -22,21 +24,27 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
-		Flux<String> nombres = Flux.just("Andres", "Pedro", "Jhon", "Diego", "Juan")
+		Flux<Usuario> nombres = Flux.just("Andres", "Pedro", "Jhon", "Diego", "Juan")
+				.map(nombre -> new Usuario(nombre.toUpperCase(), null)) // Realiza la transformacion del stream
 				.doOnNext(
-						e -> {
-							if(e.isEmpty()) {
+						usuario -> {
+							if(usuario == null) {
 								throw new RuntimeException("Nombres no pueden ser vacíos");
 							}else {
-								System.out.println();									
+								System.out.println(usuario.getNombre());									
 							}
-						});
+						})
+				.map(usuario -> {
+						String nombre = usuario.getNombre().toLowerCase();
+						usuario.setNombre(nombre);
+						return usuario; 
+					}); // Realiza la transformacion del stream
 						
 						
 		
 		
 		nombres.subscribe(
-					Log::info, //Funcion para cada elemento que llega en la susccripción 
+					usuario -> Log.info(usuario.getNombre()), //Funcion para cada elemento que llega en la susccripción 
 					error -> Log.error(error.getMessage()), // Funcion en caso de error
 					new Runnable() { // Evento onComplete, corresponde a la función a ejecutar toda vez que termine el Stream
 						@Override
