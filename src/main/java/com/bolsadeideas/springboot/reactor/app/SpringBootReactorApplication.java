@@ -28,8 +28,27 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		//ejemploIterable();
 //		ejemploFlatMap();
-		ejemploToString();
+//		ejemploToString();
+		ejemploCollectList();
+	}
+	
+	public void ejemploCollectList() throws Exception {
+
+		List<Usuario> usuariosList = new ArrayList<>();
+		usuariosList.add(new Usuario("Pedro", "Fulan"));
+		usuariosList.add(new Usuario("Andres", "Guzman"));
+		usuariosList.add(new Usuario("Jhon", "Doe"));
+		usuariosList.add(new Usuario("Diego", "Sultano"));
+		usuariosList.add(new Usuario("Juan", "Medrano"));
+		usuariosList.add(new Usuario("Juan", "Mengano"));
+		usuariosList.add(new Usuario("Bruce", "Lee"));
+		usuariosList.add(new Usuario("Bruce", "Willies"));
 		
+		Flux.fromIterable(usuariosList)
+		.collectList()
+		.subscribe(lista -> {
+			lista.forEach( item -> Log.info(item.toString()));
+		});
 	}
 	
 	public void ejemploToString() throws Exception {
@@ -45,7 +64,7 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 		usuariosList.add(new Usuario("Bruce", "Willies"));
 		
 		Flux.fromIterable(usuariosList)
-				.map(usuario -> usuario.getNombre().toUpperCase().concat(" ").concat(usuario.getApellido().toUpperCase())) // Realiza la transformacion del stream en Flujo de String
+				.map(usuario -> usuario.getNombre().toUpperCase().concat(usuario.getApellido().toUpperCase())) // Realiza la transformacion del stream en Flujo de String
 				.flatMap(nombre -> {
 					if(nombre.contains("bruce".toUpperCase())) {
 						return Mono.just(nombre);
