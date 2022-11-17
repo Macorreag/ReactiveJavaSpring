@@ -1,5 +1,8 @@
 package com.bolsadeideas.springboot.reactor.app;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.management.RuntimeErrorException;
 
 import org.slf4j.Logger;
@@ -21,11 +24,30 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 		SpringApplication.run(SpringBootReactorApplication.class, args);
 	}
 
-	@Override
 	public void run(String... args) throws Exception {
+		ejemploIterable();
+	}
+	
+	public void ejemploIterable() throws Exception {
 		// TODO Auto-generated method stub
-		Flux<Usuario> nombres = Flux.just("Andres Guzman", "Pedro Fulan", "Jhon Doe", "Diego Sultano", "Juan Medrano", "Juan Mengano", "Bruce Lee", "Bruce Willies")
-				.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase())) // Realiza la transformacion del stream
+		
+		
+		List<String> usuariosList = new ArrayList<>();
+		usuariosList.add("Pedro Fulan");
+		usuariosList.add("Andres Guzman");
+		usuariosList.add("Jhon Doe");
+		usuariosList.add("Diego Sultano");
+		usuariosList.add("Juan Medrano");
+		usuariosList.add("Juan Mengano");
+		usuariosList.add("Bruce Lee");
+		usuariosList.add("Bruce Willies");
+		
+		Flux<String> nombres = /*Flux.just("Andres Guzman", "Pedro Fulan", "Jhon Doe", "Diego Sultano", "Juan Medrano", "Juan Mengano", "Bruce Lee", "Bruce Willies");*/
+							Flux.fromIterable(usuariosList);
+		
+		
+		
+		Flux<Usuario> usuarios =	nombres.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase())) // Realiza la transformacion del stream
 				.filter(usuario -> usuario.getNombre().toLowerCase().equals("bruce"))
 				.doOnNext(
 						usuario -> {
@@ -44,7 +66,7 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 						
 		
 		
-		nombres.subscribe(
+		usuarios.subscribe(
 					usuario -> Log.info(usuario.toString()), //Funcion para cada elemento que llega en la susccripción 
 					error -> Log.error(error.getMessage()), // Funcion en caso de error
 					new Runnable() { // Evento onComplete, corresponde a la función a ejecutar toda vez que termine el Stream
@@ -59,3 +81,5 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 	}
 
 }
+
+
