@@ -27,6 +27,7 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 		SpringApplication.run(SpringBootReactorApplication.class, args);
 	}
 
+	@Override
 	public void run(String... args) throws Exception {
 		//ejemploIterable();
 //		ejemploFlatMap();
@@ -34,7 +35,20 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 //		ejemploCollectList();
 //		ejemploUsuarioComentariosFlatMap();
 //		ejemploUsuarioComentariosZipWith();
-		ejemploUsuarioComentariosZipWithForma2();
+//		ejemploUsuarioComentariosZipWithForma2();
+		ejemploZipWithrangos();
+		
+	}
+	
+	
+	public void ejemploZipWithrangos() {
+		
+		Flux<Integer> rangos = Flux.range(0, 4);
+		
+		Flux.just(1,2,3,4)
+		.map(i  -> i*2)
+		.zipWith(rangos, (uno, dos) -> String.format("Primer Flux: %d, Segundo Flux %d", uno, dos))
+		.subscribe(texto -> Log.info(texto));
 		
 	}
 	
