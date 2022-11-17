@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.bolsadeideas.springboot.reactor.app.models.Usuario;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @SpringBootApplication
 public class SpringBootReactorApplication implements CommandLineRunner{
@@ -25,9 +26,45 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 	}
 
 	public void run(String... args) throws Exception {
-		ejemploIterable();
+		//ejemploIterable();
+		ejemploFlatMap();
+		
 	}
 	
+	public void ejemploFlatMap() throws Exception {
+		// TODO Auto-generated method stub
+		
+		
+		List<String> usuariosList = new ArrayList<>();
+		usuariosList.add("Pedro Fulan");
+		usuariosList.add("Andres Guzman");
+		usuariosList.add("Jhon Doe");
+		usuariosList.add("Diego Sultano");
+		usuariosList.add("Juan Medrano");
+		usuariosList.add("Juan Mengano");
+		usuariosList.add("Bruce Lee");
+		usuariosList.add("Bruce Willies");
+		
+		Flux.fromIterable(usuariosList)
+				.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase())) // Realiza la transformacion del stream
+				.flatMap(usuario -> {
+					if(usuario.getNombre().equalsIgnoreCase("bruce")) {
+						return Mono.just(usuario);
+					}else {
+						return Mono.empty();
+					}
+				})
+				.map(usuario -> {
+						String nombre = usuario.getNombre().toLowerCase();
+						usuario.setNombre(nombre);
+						return usuario; 
+					})
+				.subscribe(usuario -> Log.info(usuario.toString())
+				);
+		
+		
+	}
+
 	public void ejemploIterable() throws Exception {
 		// TODO Auto-generated method stub
 		
