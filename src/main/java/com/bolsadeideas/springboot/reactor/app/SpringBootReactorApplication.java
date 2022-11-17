@@ -3,6 +3,7 @@ package com.bolsadeideas.springboot.reactor.app;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import javax.management.RuntimeErrorException;
 
@@ -39,17 +40,44 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 //		ejemploUsuarioComentariosZipWithForma2();
 //		ejemploZipWithrangos();
 		
-		ejemploInterval();
+//		ejemploDelayElements();
+		ejemploIntervaloInfinito();
 		
 		
 		
 	}
 
-	public void ejemploDelayElements() {
+	
+	public void ejemploIntervaloInfinito() throws InterruptedException  {
+		
+		CountDownLatch latch = new CountDownLatch(1);
+		
+		
+		Flux.interval(Duration.ofSeconds(1))
+		.doOnTerminate(latch::countDown)
+		.flatMap(i -> {
+			if(i >= 5) {
+				return Flux.error(new InterruptedException("Solo hasta 5!"));
+			}
+			return Flux.just(i);
+		})
+		.map(i -> "Hola " + i)
+		.retry(2)
+		.subscribe(s -> Log.info(s), 
+					e -> Log.error(e.getMessage())
+				);
+		
+		latch.await();
+		
+	}
+	
+	public void ejemploDelayElements() throws InterruptedException {
 		Flux<Integer> rango = 	Flux.range(1, 12)
 				.delayElements(Duration.ofSeconds(1))
 				.doOnNext(i -> Log.info(i.toString()));
-		rango.blockLast();
+		rango.subscribe(); // Esto se ejecuta en segundo plano para no bloquear la ejecución
+		
+		Thread.sleep(13000); //Se deja el hilo principal esperando 13 segundos para poder ver las impresiones del subproceso
 
 	}
 	
