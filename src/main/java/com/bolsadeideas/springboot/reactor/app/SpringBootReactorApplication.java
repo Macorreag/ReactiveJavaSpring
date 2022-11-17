@@ -9,6 +9,8 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.management.RuntimeErrorException;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -44,10 +46,53 @@ public class SpringBootReactorApplication implements CommandLineRunner{
 		
 //		ejemploDelayElements();
 //		ejemploIntervaloInfinito();
-		ejemploIntervaloDesdeCreate();
+//		ejemploIntervaloDesdeCreate();
+		ejemploContraPresion();
 		
 		
-		
+	}
+	
+	public void ejemploContraPresion() {
+		Flux.range(1, 10)
+		.log()
+		.limitRate(2) //Limita la cantidad de elementos que se proporcionaran en el request
+		.subscribe(/*new Subscriber<Integer>() {
+
+			private Subscription s;
+			private Integer limite = 5;
+			private Integer consumido = 0;
+			@Override
+			public void onSubscribe(Subscription s) {
+				// TODO Auto-generated method stub
+				this.s = s;
+				s.request(limite);
+				
+			}
+
+			@Override
+			public void onNext(Integer t) {
+				Log.info(t.toString());
+				consumido++;
+				if(consumido == limite) {
+					consumido = 0;
+					s.request(limite);
+				}
+			}
+
+			@Override
+			public void onError(Throwable t) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onComplete() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			
+		}*/);
 	}
 
 	public void ejemploIntervaloDesdeCreate() {
